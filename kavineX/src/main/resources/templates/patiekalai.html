@@ -1,0 +1,180 @@
+
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Užsakymai</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<style>
+			.anuliuotas, .sanuliuotas {
+				background-color: lightblue;
+			}
+			.ivykdytas, .sivykdytas {
+				background-color: lightgreen;
+			}
+			
+			.upload-btn-wrapper {
+				position: relative;
+				overflow: hidden;
+				display: inline-block;
+			}
+			
+			.btn {
+				position: fixed;
+				left: 140px;
+				top: 182px;
+			}
+
+			.upload-btn-wrapper input[type=file] {
+				position: fixed;
+				left: 220px;
+				top: 182px;
+			}	
+			
+			
+			
+		</style>
+	    
+		<script
+		src="https://code.jquery.com/jquery-3.4.1.min.js"
+		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+		crossorigin="anonymous">
+	    </script>
+	    
+		<script>
+		
+		$(document).ready ( function() {
+					
+		pasiimtiUzsakymus();
+		
+		function keistiBusena( id, busena) {
+		
+			params_str = 'id=' + id + '&busena=' + busena;  
+		
+			$.ajax(
+				{
+					url: "http://localhost:8080/restfull/changestatus?" + params_str
+				}
+			)
+			.done( function( data ) {
+				
+				pasiimtiUzsakymus();
+			});			
+		}
+		
+		function pasiimtiUzsakymus() {
+		
+			$.ajax(
+				{
+					url: "http://localhost:8080/restfull/sandelys" 
+															
+				}
+			)
+			.done(	function( data ) {
+															
+						res_str = '<table>'
+								+ '<tr><th rowspan="2">id</th><th rowspan="2">pav</th><th colspan="2">trukmė</th></tr>'
+								+ '<tr><th>ruošimo</th><th>kaitinimo</th><th>veiksmas</th></tr>';
+						
+						for ( i = 0; i < data.length; i++) {
+						
+							res_str += '<tr class="s' + data [ i ].busena  + '" data-id="' + data [ i ].id  +'" >'
+								+ '<td>' + data [ i ].id + '</td>' 
+								+ '<td>' + data [ i ].pav + '</td>'
+								+ '<td>' + data [ i ].trukme_ruosimo + '</td>'
+								+ '<td>' + data [ i ].trukme_kaitinimo + '</td>'
+								;
+							if ( data [ i ].busena == 'uzsakytas' ) {	
+							
+								res_str +=
+								
+									'<td><input type="button" class="anuliuotas" value="anuliuotas"></td>'
+									+ '<td><input type="button" class="ivykdytas" value="įvykdytas"></td>'
+							}
+							if (data [i].busena == 'anuliuotas') {
+							res_str += '<td><input type="button" class="uzsakytas" value="užsakyti"></td>'
+							}
+							if (data [i].busena == 'ivykdytas') {
+							res_str += '<td><input type="button" class="uzsakytas" value="užsakyti"></td>'
+							}
+							res_str += '</tr>';
+						}
+						
+						res_str += '</table>'
+						$( '#uzsakymai' ).html ( res_str );
+						
+						$( '.anuliuotas' ).on ( 'click', function() {
+						
+							$( this ).each ( function() {
+								
+								id_uzsakymo = $( this ).parent( ).parent().data ( 'id' );
+								keistiBusena ( id_uzsakymo, 'anuliuotas' );
+							});
+						});
+
+							$( '.ivykdytas' ).on ( 'click', function() {
+						
+							$( this ).each ( function() {
+								
+								id_uzsakymo = $( this ).parent( ).parent().data ( 'id' );
+								keistiBusena ( id_uzsakymo, 'ivykdytas' );
+							});
+						});	
+							$( '.uzsakytas' ).on ( 'click', function() {
+						
+							$( this ).each ( function() {
+								
+								id_uzsakymo = $( this ).parent( ).parent().data ( 'id' );
+								keistiBusena ( id_uzsakymo, 'uzsakytas' );
+							});
+						});
+					}
+			);
+		}
+		
+		$( '#naujas_uzsakymas' ).click( function() {
+		
+			uzsakymas = {
+				
+				pav: $( '#pav' ).val()
+				, trukme_ruosimo: parseInt ( $( '#trukme_ruosimo' ).val() )
+				, trukme_kaitinimo: parseInt ( $( '#trukme_kaitinimo' ).val() )
+			}
+			
+			params_str = 
+				"pav="  + uzsakymas.pav 
+				+ '&trukme_ruosimo=' + uzsakymas.trukme_ruosimo 
+				+ '&trukme_kaitinimo=' + uzsakymas.trukme_kaitinimo 
+				
+			$.ajax(
+				{
+					url: "http://localhost:8080/restfull/add?" + params_str
+				}
+			)
+			.done( function( data ) {
+				
+				pasiimtiUzsakymus();
+			
+			});
+		});
+			
+	});
+	
+</script>
+
+</head>
+<body>
+	<form action="">
+		Patiekalo pavadinimas<br>
+		<input type="text" id="pav" value=""><br><br>
+		Trukmė ruošimo<br>
+		<input type="text" id="trukme_ruosimo" value=""><br><br>
+		Trukmė kaitinimo<br>
+		<input type="text" id="trukme_kaitinimo" value=""><br><br>
+		<input type="button" id="naujas_uzsakymas" value="Užsakyti">
+	</form>
+	
+	<div id="message"></div>
+	<div id="uzsakymai"></div>	
+	
+</body>
+</html>
