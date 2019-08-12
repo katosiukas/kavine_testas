@@ -23,7 +23,7 @@ public class GreetingController {
         return "produktai";
     }
     
-    @GetMapping("/uzsakymai154")
+    @GetMapping("/uzsakymai311")
     public String uzsakymai(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
         model.addAttribute("name", name);
         return "produktai";

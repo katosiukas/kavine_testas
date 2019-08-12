@@ -15,6 +15,7 @@ public class ProduktasMapper implements RowMapper<Produktas> {
       produktas.setMat_kiek(rs.getInt("mat_kiek"));
       produktas.setKaina(rs.getFloat("kaina"));
       produktas.setKiekis_sand(rs.getFloat("kiekis_sand"));
+      produktas.setLikutis(rs.getString("likutis"));
       
       return produktas;
    }

@@ -8,6 +8,7 @@ public class Produktas {
 	private int mat_kiek;
 	private float kaina;
 	private float kiekis_sand;
+	private String likutis;
 
 	public void setId( int id ) {
 		
@@ -65,5 +66,12 @@ public class Produktas {
 	public float getKiekis_sand () {
 		
 		return this.kiekis_sand;
+	}
+	public String getLikutis() {
+		return likutis;
+	}
+
+	public void setLikutis(String likutis) {
+		this.likutis = likutis;
 	}
 }
