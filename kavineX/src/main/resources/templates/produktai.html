@@ -5,7 +5,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css">
 		<style>
-		
+			
+			label, input { display:block; }
+			input.text { margin-bottom:12px; width:95%; padding: .4em; }
+			fieldset { padding:0; border:0; margin-top:25px; }
+			h1 { font-size: 1.2em; margin: .6em 0; }
+			div#users-contain { width: 350px; margin: 20px 0; }
+			div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+			div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+			.ui-dialog .ui-state-error { padding: .3em; }
+			.validateTips { border: 1px solid transparent; padding: 0.3em; }
+			
 			.anuliuotas, .sanuliuotas {
 				background-color: #ff3333;
 			}
@@ -99,6 +109,7 @@
 								+ '<td align="center">' + data [ i ].kaina + '</td>'
 								+ '<td align="center">' + data [ i ].kiekis_sand + '</td>'
 								;
+								
 							//jei yra likutis galima istrinti produkta	
 							if ( data [ i ].likutis == 'yra' ) {	
 							
@@ -107,6 +118,7 @@
 									'<td><input type="button" class="anuliuotas" value="Naikinti"></td>'
 									
 							}	
+							
 							// jei yra likutis galima redaguoti produkta
 							if (data [i].likutis == 'yra') {
 							res_str += '<td><input type="button" class="redaguotas" value="Redaguoti"></td>'
@@ -139,8 +151,7 @@
 							$( '#kiekis_sand' ).val ( $( this ).parent().parent().data( 'kiekis_sand' ) );
 						});						
 										
-					}
-			);
+			});
 		}
 		
 		$( "#itraukti" ).on( "click", function() { dialog1.dialog( "open" );	});		
@@ -177,8 +188,58 @@
 			});
 		};
 		
-		function addProdukt() {
 		
+			var dialog, form,
+		//	emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+			pavp = $( "#pavp" ),
+			mat_vntp = $( "#mat_vntp" ),
+			mat_kiekp = $( "#mat_kiekp" ),
+			kainap = $( "#kainap" ),
+			kiekis_sandp = $( "#kiekis_sandp" ),
+			allFields = $( [] ).add( pavp ).add(mat_vntp).add(mat_kiekp).add(kainap).add(kiekis_sandp),
+			tips = $( ".validateTips" );
+ 
+			function updateTips( t ) {
+			tips
+			.text( t )
+			.addClass( "ui-state-highlight" );
+			setTimeout(function() {
+			tips.removeClass( "ui-state-highlight", 1500 );
+			}, 500 );
+			}
+ 
+			function checkLength( o, n, min, max ) {
+			if ( o.val().length > max || o.val().length < min ) {
+			o.addClass( "ui-state-error" );
+			updateTips( "Eilutė - " + n + " - tusčia! " );
+			return false;
+			} else {
+			return true;
+			}
+			}
+ 
+	/*		function checkRegexp( o, regexp, n ) {
+			if ( !( regexp.test( o.val() ) ) ) {
+			o.addClass( "ui-state-error" );
+			updateTips( n );
+			return false;
+			} else {
+			return true;
+			}
+			}	*/
+			
+		function addProdukt() {
+			var valid = true;
+			allFields.removeClass( "ui-state-error" );
+ 
+			valid = valid && checkLength( pavp, ' "Pavadinimas" ', 1, 15 );
+			valid = valid && checkLength( mat_vntp, ' "Mato vienetai" ', 1, 15);
+			valid = valid && checkLength( mat_kiekp, ' "Mato kiekybė" ', 1, 15);
+			valid = valid && checkLength( kainap, ' "Kaina" ', 1, 15);
+			valid = valid && checkLength( kiekis_sandp, ' "Kiekis sandėlyje" ', 1, 15);
+		    
+			if ( valid ) {
+			
 			itrauktas = {
 				
 				pavp: $( '#pavp' ).val()
@@ -208,7 +269,7 @@
 		
 		dialog1.dialog( "close" );	
 		}
-				
+	}	
 		function editP() {
 		
 			redaguotas = {
@@ -246,8 +307,8 @@
 		
 		dialog = $( "#dialog-form" ).dialog({
 		autoOpen: false,
-		height: 480,
-		width: 410,
+		height: 600,
+		width: 380,
 		modal: true,
 		buttons: {
         "Išsaugoti pakeitimus": editP,
@@ -259,8 +320,8 @@
 		
 		dialog1 = $( "#dialog-form1" ).dialog({
 		autoOpen: false,
-		height: 480,
-		width: 410,
+		height: 580,
+		width: 350,
 		modal: true,
 		buttons: {
         "Įtraukti produktą": addProdukt,
@@ -292,23 +353,23 @@
 	<form>
     <fieldset>
 	
-	  <label for="id">Prekės ID</label></br>
-      <input type="text" name="id" id="id" value="id" class="text ui-widget-content ui-corner-all"></br>
+	  <label for="id">Prekės ID</label>
+      <input type="text" name="id" id="id" value="id" class="text ui-widget-content ui-corner-all">
 	  
-      <label for="pav">Pavadinimas</label></br>
-      <input type="text" name="pav" id="pav" value="pav" class="text ui-widget-content ui-corner-all"></br>
+      <label for="pav">Pavadinimas</label>
+      <input type="text" name="pav" id="pav" value="pav" class="text ui-widget-content ui-corner-all">
 	  
-      <label for="email">Mato vienetai</label></br>
-      <input type="text" name="email" id="mat_vnt" value="mat_vnt" class="text ui-widget-content ui-corner-all"></br>
+      <label for="email">Mato vienetai</label>
+      <input type="text" name="email" id="mat_vnt" value="mat_vnt" class="text ui-widget-content ui-corner-all">
 	  
-      <label for="mat_kiek">Mato kiekybė</label></br>
-      <input type="text" name="password" id="mat_kiek" value="mat_kiek" class="text ui-widget-content ui-corner-all"></br>
+      <label for="mat_kiek">Mato kiekybė</label>
+      <input type="text" name="password" id="mat_kiek" value="mat_kiek" class="text ui-widget-content ui-corner-all">
 	  
-	  <label for="password">Kaina</label></br>
-      <input type="text" name="password" id="kaina" value="kaina" class="text ui-widget-content ui-corner-all"></br>
+	  <label for="password">Kaina</label>
+      <input type="text" name="password" id="kaina" value="kaina" class="text ui-widget-content ui-corner-all">
 	  
-	  <label for="password">Kiekis sandėlyje</label></br>
-      <input type="text" name="password" id="kiekis_sand" value="kiekis_sand" class="text ui-widget-content ui-corner-all"></br>
+	  <label for="password">Kiekis sandėlyje</label>
+      <input type="text" name="password" id="kiekis_sand" value="kiekis_sand" class="text ui-widget-content ui-corner-all">
        
       <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
     </fieldset>
@@ -316,24 +377,24 @@
 	</div>
 	
 	<div id="dialog-form1" title="Įtraukti produktą">
-	<p class="validateTips">Visi laukai privalomi.</p>
+	<p class="validateTips">Visi laukai privalomi!</p>
  	<form>
     <fieldset>
 	
-	  <label for="pavp">Pavadinimas</label></br>
-      <input type="text" name="pavp" id="pavp" class="text ui-widget-content ui-corner-all"></br>
+	  <label for="pavp">Pavadinimas</label>
+      <input type="text" name="pavp" id="pavp" class="text ui-widget-content ui-corner-all">
 	  
-      <label for="mat_vntp">Mato vienetai</label></br>
-      <input type="text" name="mat_vntp" id="mat_vntp"  class="text ui-widget-content ui-corner-all"></br>
+      <label for="mat_vntp">Mato vienetai</label>
+      <input type="text" name="mat_vntp" id="mat_vntp"  class="text ui-widget-content ui-corner-all">
 	  
-      <label for="mat_kiekp">Mato kiekybė</label></br>
-      <input type="text" name="mat_kiekp" id="mat_kiekp"  class="text ui-widget-content ui-corner-all"></br>
+      <label for="mat_kiekp">Mato kiekybė</label>
+      <input type="text" name="mat_kiekp" id="mat_kiekp"  class="text ui-widget-content ui-corner-all">
 	  
-	  <label for="kainap">Kaina</label></br>
-      <input type="text" name="kainap" id="kainap" class="text ui-widget-content ui-corner-all"></br>
+	  <label for="kainap">Kaina</label>
+      <input type="text" name="kainap" id="kainap" class="text ui-widget-content ui-corner-all">
 	  
-	  <label for="kiekis_sandp">Kiekis sandėlyje</label></br>
-      <input type="text" name="kiekis_sandp" id="kiekis_sandp" class="text ui-widget-content ui-corner-all"></br>
+	  <label for="kiekis_sandp">Kiekis sandėlyje</label>
+      <input type="text" name="kiekis_sandp" id="kiekis_sandp" class="text ui-widget-content ui-corner-all">
        
       <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
     </fieldset>

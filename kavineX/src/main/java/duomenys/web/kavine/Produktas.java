@@ -1,7 +1,15 @@
 package duomenys.web.kavine;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Entity;
+
+
+@Entity
 public class Produktas {
-	
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)	
 	private int id;
 	private String pav;
 	private String mat_vnt;

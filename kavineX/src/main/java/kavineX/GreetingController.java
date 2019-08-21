@@ -23,9 +23,9 @@ public class GreetingController {
         return "produktai";
     }
     
-    @GetMapping("/uzsakymai311")
+    @GetMapping("/uzsakymai576")
     public String uzsakymai(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
         model.addAttribute("name", name);
-        return "produktai";
+        return "uzsakymai";
     } 
 }

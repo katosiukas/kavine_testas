@@ -144,7 +144,7 @@ public class MainController {
 	}
 	
 	@GetMapping(path="/all")
-	public @ResponseBody Iterable<Uzsakymai> getAllUsers1() {
+	public @ResponseBody Iterable<Uzsakymai> getAllUsers() {
 		
 		return UzsakymaiRepository.findAll();
 	}
@@ -154,7 +154,13 @@ public class MainController {
 		
 		return ProduktaiRepository.findAll();
 	}
-	
+		
+	@GetMapping(path="/ingredientai")
+	public @ResponseBody Optional Uzsakymai(@RequestParam Integer id_patiekalo) {
+		
+		return UzsakymaiRepository.findById (id_patiekalo);
+	}
+			
 	@GetMapping(path="/isnesioti")
 	public @ResponseBody Iterable<Patiekalas> getAllUzsakymai() {
 		

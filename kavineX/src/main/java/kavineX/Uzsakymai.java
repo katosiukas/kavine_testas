@@ -1,10 +1,17 @@
 package kavineX;
 
+import java.util.Set;
+
+import javax.persistence.*;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 // import duomenys.web.kavine.*;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class Uzsakymai {
@@ -15,6 +22,10 @@ public class Uzsakymai {
     private Integer trukme_ruosimo;
     private Integer trukme_kaitinimo;
     private String busena;    
+    
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "uzsakymu_produktai", joinColumns = @JoinColumn(name = "id_patiekalo", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "id_produkto", referencedColumnName = "id"))
+	private Set<Produktai> produktai;
     
     public Integer getId() {
 		return id;
@@ -54,6 +65,14 @@ public class Uzsakymai {
 
 	public void setBusena(String busena) {
 		this.busena = busena;
+	}
+
+	public Set<Produktai> getProduktai() {
+		return produktai;
+	}
+	
+	public void setProduktas (Set<Produktai> produktai) {
+		this.produktai = produktai;
 	}
 
 	    
