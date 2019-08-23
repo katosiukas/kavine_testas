@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Užsakymai</title>
+    <title>Patiekalai</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css">
 	
@@ -18,17 +18,18 @@
 			.ui-dialog .ui-state-error { padding: .3em; }
 			.validateTips { border: 1px solid transparent; padding: 0.3em; }
 			
-			.anuliuotas, .sanuliuotas {
-				background-color: lightblue;
+			.istrinti, .sistrinti {
+				background-color: red;
 			}
-			.ivykdytas, .sivykdytas {
-				background-color: lightgreen;
-			}
-			
+						
 			.sudetis, .ssudetis {
 				background-color: blue;
 			}
-					
+			
+			.prideti, .sprideti {
+				background-color: green;
+			}
+			
 			table, th, td {
 				border: 2px solid black;
 				
@@ -84,37 +85,38 @@
 	$(document).ready ( function() {
 			
 		var id_accessing;
-				
-		pasiimtiUzsakymus();
+		var id_add_pat;
+						
+		pasiimtiPatiekalus();
 		
-		function keistiBusena( id, busena) {
+		function del_pat( id ) {
 		
-			params_str = 'id=' + id + '&busena=' + busena;  
+			params_str = 'id=' + id;  
 		
 			$.ajax(
 				{
-					url: "http://localhost:8080/restfull/changestatus?" + params_str
+					url: "http://localhost:8080/restfull/del_pat?" + params_str
 				}
 			)
 			.done( function( data ) {
 				
-				pasiimtiUzsakymus();
+				pasiimtiPatiekalus();
 			});			
 		}
 		
-		function pasiimtiUzsakymus() {
+		function pasiimtiPatiekalus() {
 		
 			$.ajax(
 				{
-					url: "http://localhost:8080/restfull/all" 
+					url: "http://localhost:8080/restfull/all_pat" 
 															
 				})
 			
 			.done(	function( data ) {
 															
 				res_str = '<table>'
-					+ '<tr><th rowspan="2">id</th><th rowspan="2">pavadinimas</th><th colspan="2">trukmė</th></tr>'
-					+ '<tr><th>ruošimo</th><th>kaitinimo</th><th>veiksmas</th></tr>';
+					+ '<tr><th rowspan="2">ID</th><th rowspan="2">Pavadinimas</th><th colspan="2">TRUKMĖ</th></tr>'
+					+ '<tr><th>ruošimo</th><th>kaitinimo</th><th>Kaina</th></tr>';
 						
 				for ( i = 0; i < data.length; i++) {
 						
@@ -122,29 +124,25 @@
 						+ '<td>' + data [ i ].id + '</td>' 
 						+ '<td>' + data [ i ].pav + '</td>'
 						+ '<td>' + data [ i ].trukme_ruosimo + '</td>'
-						+ '<td>' + data [ i ].trukme_kaitinimo + '</td>';
+						+ '<td>' + data [ i ].trukme_kaitinimo + '</td>'
+						+ '<td>' + data [ i ].kaina + '</td>';
 								
-					if ( data [ i ].busena == 'uzsakytas' ) {	
-							
-						res_str +=
-							'<td><input type="button" class="anuliuotas" value="anuliuotas"></td>'
-							+ '<td><input type="button" class="ivykdytas" value="įvykdytas"></td>'
-					}
-					
-					if (data [i].busena == 'anuliuotas') {
-						res_str += '<td><input type="button" class="uzsakytas" value="užsakyti"></td>'
-					}
-					
-					if (data [i].busena == 'ivykdytas') {
-						res_str += '<td><input type="button" class="uzsakytas" value="užsakyti"></td>'
-					}
-						res_str += '</tr>';
+					res_str +=
+						'<td><input type="button" class="istrinti" value="Ištrinti"></td>'
+						+ '<td><input type="button" class="sudetis" value="Sudėtis"></td>'
+					//	+ '<td><input type="button" class="prideti" value="Pridėti ingredienta"></td>'
+					//	+ '<td><input type="button" class="pasalinti_i" value="Pašalinti ingredientą"></td>'
+					//	+ '<td><input type="button" class="redaguoti_i" value="Redaguoti ingredientą"></td>'
+				
+					res_str += '</tr>';
+											
 				}
 						
 				res_str += '</table>'
+				
 					$( '#uzsakymai' ).html ( res_str );
 						
-					$( '.anuliuotas' ).on ( 'click', function() {
+					$( '.istrinti' ).on ( 'click', function() {
 						
 						$( this ).each ( function() {
 								
@@ -154,54 +152,62 @@
 						});
 					});
 
-				$( '.ivykdytas' ).on ( 'click', function() {
+					$( '.prideti' ).on ( 'click', function() {
 						
-					$( this ).each ( function() {
+						$( this ).each ( function() {
 								
-						id_uzsakymo = $( this ).parent( ).parent().data ( 'id' );
-						keistiBusena ( id_uzsakymo, 'ivykdytas' );
-					});
-				});	
+							id_add_pat = $( this ).parent( ).parent().data ( 'id' );
 							
-				$( '.uzsakytas' ).on ( 'click', function() {
-						
-					$( this ).each ( function() {
+							$.ajax(
+								{
+									url: "http://localhost:8080/restfull/produktai" 
+															
+								})
+			
+							.done(	function( data ) {
+							
+								for ( i = 0; i < data.length; i++) {
+	
+									$( 'select#dropdown' ).append(  '<option value="' + data [ i ].id + '">' + data [ i ].pav + '</option>');
+								}
 								
-						id_uzsakymo = $( this ).parent( ).parent().data ( 'id' );
-						keistiBusena ( id_uzsakymo, 'uzsakytas' );
+							});
+							
+						dialog1.dialog( "open" );
+								
+						});
 					});
-				});
-				
+
 				$( '.sudetis' ).on ( 'click', function() {
 							
 					patiekalo_id = $( this ).parent().parent().data( 'id' );
 						
 						$.ajax(
 							{
-								url: "http://localhost:8080/restfull/ingredientai?patiekalo_id="  + patiekalo_id 
+								url: "http://localhost:8080/restfull/patiekalai?patiekalo_id="  + patiekalo_id 
 															
 							})
 							
 							.done(	function( data ) {
 									
-								if ( data.produktai.length > 0 ) {
+								if ( data.patiekalu_produktai.length > 0 ) {
 									
-									$( "#prod_sudetis" ).dialog( "open" );
+									$( "#sudetis" ).dialog( "open" );
 									
 									patiekalas = data; 
 																									
-									if ( patiekalas.produktai.length > 0 ) {
+									if ( patiekalas.patiekalu_produktai.length > 0 ) {
 										
 										i=0;
 										ingredientai=" ";
 										
-										while (i < patiekalas.produktai.length) {
+										while (i < patiekalas.patiekalu_produktai.length) {
 											
-											ingredientai = ingredientai + " " + patiekalas.produktai[i].pav
+											ingredientai = ingredientai + " " + patiekalas.patiekalu_produktai[i].produktai.pav + " " + patiekalas.patiekalu_produktai[i].kiekis + "</br>"
 											i++;
 										}
 										
-										$( '#prod_sudetis' ).dialog({   //nusistatom dialogo lango pavadinima
+										$( '#sudetis' ).dialog({   //nusistatom dialogo lango pavadinima
 											autoOpen: false,
 											title: "Patiekalo: " + patiekalas.pav + " sudėtis:"
 										});
@@ -211,7 +217,7 @@
 									}	
 								}									
 									
-								if ( data.produktai.length == 0 ) {
+								if ( data.patiekalu_produktai.length == 0 ) {
 									
 									alert("Sitam patiekalui nera produktu!");
 									
@@ -222,64 +228,6 @@
 								
 		}
 		
-		$( '#naujas_uzsakymas' ).click( function() {
-		
-			uzsakymas = {
-				
-				pav: $( '#pav' ).val()
-				, trukme_ruosimo: parseInt ( $( '#trukme_ruosimo' ).val() )
-				, trukme_kaitinimo: parseInt ( $( '#trukme_kaitinimo' ).val() )
-			}
-			
-			params_str = 
-				"pav="  + uzsakymas.pav 
-				+ '&trukme_ruosimo=' + uzsakymas.trukme_ruosimo 
-				+ '&trukme_kaitinimo=' + uzsakymas.trukme_kaitinimo 
-				
-			$.ajax(
-				{
-					url: "http://localhost:8080/restfull/add?" + params_str
-				}
-			)
-			.done( function( data ) {
-				
-				pasiimtiUzsakymus();
-			
-			});
-		});
-			
-		function doSubmit(){
-   
-			var formData = new FormData();
-			var fileSelect = document.getElementById("fileSelect");
-				if (fileSelect.files[0] == null) {
-					alert("Nepridėtas failas!");
-				}
-				
-				if(fileSelect.files && fileSelect.files.length == 1){
-					var file = fileSelect.files[0]
-					formData.set("file", file , file.name);
-				}
-	    
-			var request = new XMLHttpRequest();
-			request.open('POST', "http://localhost:8080/upload");
-			request.send(formData);
-	
-			request.onreadystatechange = function() {						// be sito patikrinimo ar gautas response, niekas negaunama, turi buti parejes visi duomenys
-				if (this.readyState == 4 && this.status == 200) {
-					document.getElementById('message').innerHTML = this.responseText;
-				}
-			
-				pasiimtiUzsakymus();	// atiduodam importuotus uzsakymus i html, po to kai jau atejo reponse kad importas ivykes.
-			}
-		}
-		
-		$( '#somebutton' ).click( function() {
-			
-			doSubmit();
-					
-		});
-
 		$( "#itraukti" ).on( "click", function() { dialog.dialog( "open" );	});
 	
 		function ConfirmDialog(message) {
@@ -295,7 +243,7 @@
 			buttons: {
 			Taip: function() {
           
-				keistiBusena ( id_accessing, 'anuliuotas' );
+				del_pat ( id_accessing, 'istrinti' );
 				
 				$(this).dialog("close");
 				},
@@ -329,33 +277,74 @@
 				alert("Trukmė kaitinimo laukas tusčias!");
 			}
 		
+			else if 	( $(kaina).val().length == 0 ) {
+		
+				alert("Kaina laukas tusčias!");
+			}
+		
 			else {
 			
 				itrauktas = {
 				pav: $( '#pav' ).val()
 				, trukme_ruosimo: $( '#trukme_ruosimo' ).val() 
 				, trukme_kaitinimo: parseInt ( $( '#trukme_kaitinimo' ).val() )
+				, kaina: parseFloat ( $( '#kaina' ).val() )
 				}
 			
 				params_str = 
 				"pav="  + itrauktas.pav 
 				+ '&trukme_ruosimo=' + itrauktas.trukme_ruosimo 
 				+ '&trukme_kaitinimo=' + itrauktas.trukme_kaitinimo
+				+ '&kaina=' + itrauktas.kaina
 							
 				$.ajax(
 				{
-					url: "http://localhost:8080/restfull/add?" + params_str
+					url: "http://localhost:8080/restfull/add_pat?" + params_str
 				})
 					
 				.done( function( data ) {
 				
-					pasiimtiUzsakymus();
+					pasiimtiPatiekalus();
 			
 				});	
 		
 				dialog.dialog( "close" );	
 			}
 		}
+	
+		function addIng() {
+			
+			if ( !isNaN (parseInt ( $( '#dropdown' ).val() ))) {
+			
+				itrauktas = {	
+				
+				idp: parseInt ( $( '#dropdown' ).val() ) 
+				, kiekisp: parseInt ( $( '#kiekisp' ).val() ) 
+					
+				}		
+				
+			}
+ 								
+			params_str = 
+				"patiekalo_id=" + id_add_pat
+				+ '&produkto_id='  + itrauktas.idp 
+				+ '&kiekis=' + itrauktas.kiekisp 
+				
+								
+			$.ajax(
+				{
+					url: "http://localhost:8080/restfull/adding?" + params_str
+				}
+			)
+			.done( function( data ) {
+				
+				pasiimtiPatiekalus();
+			
+			});	
+		
+		dialog1.dialog( "close" );	
+		}
+		
 	
 		dialog = $( "#dialog-form" ).dialog({
 	
@@ -371,7 +360,21 @@
 			},
 		});
 		
-		$( "#prod_sudetis" ).dialog({
+			
+		dialog1 = $( "#dialog-form1" ).dialog({
+		autoOpen: false,
+		height: 300,
+		width: 380,
+		modal: true,
+		buttons: {
+        "Įtraukti ingredientą": addIng,
+        Uždaryti: function() {
+         dialog1.dialog( "close" );
+        }
+		},
+		});	
+		
+		$( "#sudetis" ).dialog({
 		
 			autoOpen: false,
 			show: {
@@ -381,7 +384,12 @@
 			hide: {
 			effect: "explode",
 			duration: 300
-			}
+			},
+			buttons: {
+			"Pridėti": addIng,
+			"Redaguoti": addIng,
+			"Pašalinti": addIng,
+			},
 		});
 			
 	});
@@ -397,36 +405,51 @@
 
 <body>
 
-	<a href="http://localhost:8080/produktai" class="pereiti">Produktų puslapis</a></br>
-	<p><label for="itraukti"></label><input class="itraukti" type="button" value="Įtraukti naują" id="itraukti" title="Įtraukti naują patiekalą į užsakymus."></p>
+	<a href="http://localhost:8080/produktai" class="pereiti">Patiekalų puslapis</a></br>
+	<p><label for="itraukti"></label><input class="itraukti" type="button" value="Įtraukti naują" id="itraukti" title="Įtraukti naują patiekalą."></p>
 	
 	<div id="dialog-form" title="Įtraukti patiekalą:">
 	<p class="validateTips">Visi laukai privalomi!</p>
 	<form id="f1">
     <fieldset>
-	  <label for="pav">Patiekalo pavadinimas</label>
-      <input type="text" name="pav" id="pav" class="text ui-widget-content ui-corner-all">
+		<label for="pav">Patiekalo pavadinimas</label>
+		<input type="text" name="pav" id="pav" value=" " class="text ui-widget-content ui-corner-all">
 	  
-      <label for="email">Trukmė ruošimo</label>
-      <input type="text" name="email" id="trukme_ruosimo" class="text ui-widget-content ui-corner-all">
+		<label for="email">Trukmė ruošimo</label>
+		<input type="text" name="email" id="trukme_ruosimo" value=" " class="text ui-widget-content ui-corner-all">
 	  
-      <label for="mat_kiek">Trukmė kaitinimo</label>
-      <input type="text" name="password" id="trukme_kaitinimo" class="text ui-widget-content ui-corner-all">
+		<label for="mat_kiek">Trukmė kaitinimo</label>
+		<input type="text" name="password" id="trukme_kaitinimo" value=" " class="text ui-widget-content ui-corner-all">
 	  	    
-      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+		<label for="email">Kaina</label>
+		<input type="text" name="email" id="kaina" value=" " class="text ui-widget-content ui-corner-all">
+	  
+	  <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
     </fieldset>
 	</form>
 	</div>
 	
-	<div id="prod_sudetis" >
+	<div id="dialog-form1" title="Įtraukti ingredientą">
+	<form>
+    <fieldset>
+		   
+		<label for="dropdown">Pasirink produkta</label>
+		<select name="pavp" id="dropdown">
+			<option value=""></option>
+		</select>
+		
+      <label for="kiekisp">Kiekis</label>
+      <input type="text" name="kiekisp" id="kiekisp"  class="text ui-widget-content ui-corner-all">
+	               
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+	</form>
+	</div>	
+	
+	<div id="sudetis" >
 		<p><div id="ingredientas" ></div></p>
 	</div>
-	
-	<form>
-		<input type="file" id="fileSelect" accept=".csv"/>
-		<button id="somebutton" type="button">Siūsti</button>
-	</form>
-		
+			
 	<div id="message"></div>
 	<div id="uzsakymai"></div>	
 
