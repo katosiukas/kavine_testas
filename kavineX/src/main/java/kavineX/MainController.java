@@ -192,6 +192,18 @@ public class MainController {
 		return "Saved";
 	}
 		
+	@GetMapping(path="/deling")
+	public @ResponseBody String delIng (@RequestParam Integer id) {
+		
+		Optional <Patiekalu_produktai> found = Patiekalu_produktaiRepository.findById( id );
+		
+		String res = "Not done";
+		Patiekalu_produktai n = found.get();
+		n.setId(id);
+		Patiekalu_produktaiRepository.deleteById(id);
+		return "Deleted";
+	}
+	
 	@GetMapping(path="/all")
 	public @ResponseBody Iterable<Uzsakymai> getAllUsers() {
 		
