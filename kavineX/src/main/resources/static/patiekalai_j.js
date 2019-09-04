@@ -104,25 +104,37 @@
 							while (i < patiekalas.patiekalu_produktai.length) {
 											
 								ingredientai += 
-								 '<tr data-id="' + patiekalas.patiekalu_produktai [ i ].id + '" data-pav="' + patiekalas.patiekalu_produktai [ i ].produktai.pav + '" data-kiekis="' + patiekalas.patiekalu_produktai [ i ].kiekis + '"><td>' + patiekalas.patiekalu_produktai[i].produktai.pav + '</td>'
-								+ '<td>' + patiekalas.patiekalu_produktai[i].kiekis + '</td>';
+								 '<tr data-id="' + patiekalas.patiekalu_produktai [ i ].id + '" data-pav="' + patiekalas.patiekalu_produktai [ i ].produktai.pav + '" data-kiekis="' + patiekalas.patiekalu_produktai [ i ].kiekis + '"><td>' 
+									+ patiekalas.patiekalu_produktai[i].produktai.pav + '</td>'
+									+ '<td id="kiekis_' + patiekalas.patiekalu_produktai [ i ].id + '">' + patiekalas.patiekalu_produktai[i].kiekis + '</td>';
 								
 								ingredientai += '<td><input class="trint" type="button" value="Ištrinti"></td>'
 								+ '<td><input class="redag" type="button" value="Redaguoti"></td></tr>';
 								
+								ingredientai += '<tr class="red" id="kiekis_red_' + patiekalas.patiekalu_produktai [ i ].id + '"data-id="' + patiekalas.patiekalu_produktai [ i ].id 
+												+ '"><td></td><td><input type="text" size="5" id="redaguotas_' + patiekalas.patiekalu_produktai [ i ].id + '"></td><td>'
+												+ '<input type="submit" class="red_myg" value="Įrašyti"></td><td><input type="submit" class="ats_myg" value="Atšaukti"></td></tr>';
+																							
 								i++;
 							}
 								
 							ingredientai += '</table>';			
-										
+													
 							$( '#sudetis' ).dialog({   //nusistatom dialogo lango pavadinima
 								autoOpen: false,
 								title: "Patiekalo: " + patiekalas.pav + " sudėtis:"
 							});
 									
 							$( '#ingredientas' ).html ( ingredientai );
+							
+							$ ( '.red').each ( function() {	//paslepti laukus
+								
+								$( this ).hide();
+							});
+
+						
 															
-							$( ".trint" ).on ( "click", function() {
+							$( ".trint" ).on ( "click", function() {		//ingrediento istrinimas
 								
 								ingred_id = $( this ).parent().parent().data( 'id' );
 								ingred_pav = $( this ).parent().parent().data( 'pav' );
@@ -130,15 +142,43 @@
 														
 							});
 							
-							$( ".redag" ).on ( "click", function() {
+							$( ".redag" ).each ( function() {
 								
-								ingred_id = $( this ).parent().parent().data( 'id' );
-								ingred_pav = $( this ).parent().parent().data( 'pav' );
-								ingred_kiekis = $( this ).parent().parent().data( 'kiekis' );
-								editIng(ingred_id);							
-							});
-						
+								$( this ).on ( "click", function() {		//ingrediento redagavimas
+								
+									ingred_id = $( this ).parent().parent().data( 'id' );
+									ingred_pav = $( this ).parent().parent().data( 'pav' );
+									ingred_kiekis = $( this ).parent().parent().data( 'kiekis' );
+									
+									$ ( '.red').each ( function() {	$( this ).hide();	});		// jei yra paspaustas redaguoti mygtukas, dar karta slepiam kai paspaudziamas kitas mygtukas
+											
+									$( '#kiekis_red_' + ingred_id ).show();
+								});
+								
+							});	
+							
+								$(".ats_myg").each (function() {
+									
+									$(this).on ("click", function() {
+									
+										$( '#kiekis_red_' + ingred_id ).hide();
+									
+									});
+								});	
+							
+							
+								$( '.red_myg' ).each (function() {
+								
+									$(this).on ("click", function() {
+										
+										ingred_id = $( this ).parent().parent().data( 'id' );
+										
+										editIng( ingred_id );
+									});	
+								});	
+								
 						});
+						
 		}		
 			
 		$( "#itraukti" ).on( "click", function() { dialog.dialog( "open" );	});
@@ -299,9 +339,24 @@
 			
 		}
 		
-		function editIng(id)	{
+		function editIng( r_i )	{
 			
-			alert(ingred_kiekis);
+			itraukta = { redaguotas_i: $( '#redaguotas_' + r_i ).val() }
+			
+			i_web= "id=" + ingred_id + '&kiekis=' + itraukta.redaguotas_i
+			
+			$.ajax(
+				{
+					url: "http://localhost:8080/restfull/editing?" + i_web
+				})
+			.done( function( data ) {
+				
+				pat_sudetis();
+				
+			});
+			
+											
+			$( '#kiekis_red_' + ingred_id ).hide();	
 			
 		}
 					
@@ -367,8 +422,8 @@
 		$( "#sudetis" ).dialog({
 		
 			autoOpen: false,
-			height: 300,
-			width: 440,
+			height: 'auto',
+			width: 'auto',
 			show: {
 			effect: "blind",
 			duration: 300

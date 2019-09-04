@@ -2,8 +2,6 @@ package kavineX;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-// import org.springframework.context.support.AbstractApplicationContext;
-// import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -202,6 +200,19 @@ public class MainController {
 		n.setId(id);
 		Patiekalu_produktaiRepository.deleteById(id);
 		return "Deleted";
+	}
+	
+	@GetMapping(path="/editing")
+	public @ResponseBody String editIng (@RequestParam Integer id, @RequestParam Double kiekis) {
+		
+		Optional <Patiekalu_produktai> found = Patiekalu_produktaiRepository.findById( id );
+		
+		String res = "Not done";
+		Patiekalu_produktai n = found.get();
+		n.setId(id);
+		n.setKiekis(kiekis);
+		Patiekalu_produktaiRepository.save(n);
+		return "Saved";
 	}
 	
 	@GetMapping(path="/all")

@@ -21,6 +21,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.sql.*;
 
+/**
+ * 
+ * @author Gediminas
+ * @author Internetas :)
+ * <p>
+ * 
+ * Failo pasiemimas is WEB, naudojant HttpServlet (destytojui nelabai patiko, bet veikiantis dalykas) ir failo turinio itraukimas i mySql duomenu baze (naudojant prepared statement).
+ *@see failo_pabaiga Pasitikrinimas ar failas yra CSV pletinio.
+ * Prie failo pavadinimo pridedama sios dienos data ir laikas, tam kad zinoti koks tiksliai ir kada failas ikeltas.
+ * Failas padedamas i konkrecia vieta diske (lokaliai).
+ * Po failo turinio importavimo i duomenu baze, issisiunciam atgal i WEB pranesima, kad viskas ivyko sekmingai ir kada tai ivyko, arba kad neivyko :)
+ * 
+ * 
+ * P.S. importu kiekis ispudingas, nes naudojama labai daug visokiu skirtingu proceduru (failo skaitymas, failo kopijavimas,  sql, data, servlet, controller.
+ * P.S.S. kas liko keista, tai jog kopijuojant faila uzdetas parametras REPLACE_EXISTING bet jis neveikia, neleidzia ant virsaus uzrasyti failo su tokiu paciu pavadinimu.
+ * 
+ *
+ */
+
 @Controller
 @WebServlet("/upload")
 public class UzsakymaiImportas extends HttpServlet {
@@ -29,14 +48,20 @@ public class UzsakymaiImportas extends HttpServlet {
 	@RequestMapping(path="/upload")	
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
+/**
+ * 	Failo paemimas is WEB
+ */
 		Part filePart = request.getPart("file");								// pasiimam faila is web
 		InputStream fileInputStream = filePart.getInputStream();
-			    
+/**
+ *  Datos suformavimas failui ir atidavimui i web			    
+ */
 	    	SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd-HHmm");	// apsirasom datos ir laiko formata failo pavadinimui
 	    	SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy/MM/dd-HH:mm"); // toki formata atiduosim i web
 	    	Date date = new Date(System.currentTimeMillis());					// pasiimam dabartine data ir laika
-	  	    
+/**
+ *  Failo vardo pataisymas pagal upload data ir laika	  	    
+ */
 	    	String failo_vardas = filePart.getSubmittedFileName(); 				// pasiimam failo pavadinima
 	    	int taskas = failo_vardas.indexOf('.');								// randam taska failo pavadinime
 	    	String failo_pradzia = failo_vardas.substring(0,taskas); 			// atskiriam failo pavadinima nuo pletinio
@@ -53,10 +78,12 @@ public class UzsakymaiImportas extends HttpServlet {
 	    	  		int T_ruosimo = 0;
 	    	  		int T_kaitinimo = 0;
 	    	  		try {
-	    				
+/** 
+ *  Failo turinio kelimas i dB	    				
+ */
 	    				BufferedReader br = new BufferedReader( new FileReader( fileToSave ) );
 	    				Class.forName("com.mysql.cj.jdbc.Driver"); 										//veikiantis irasu itraukimas i mysql
-						String url = "jdbc:mysql://localhost:3306/kavine"; 
+						String url = "jdbc:mysql://localhost:3306/kavine"; 								//prisijungimas prie DB
 				        Connection conn = DriverManager.getConnection(url,"root",""); 	
 	    				
 	    					while ( ( eilute = br.readLine() ) != null ) {								// pasiskaidom faila
@@ -91,14 +118,16 @@ public class UzsakymaiImportas extends HttpServlet {
 	    				
 	    				System.err.format ( "IOException: %s%n", e );
 	    			}
-	    	  		
+/**
+ *  Atsakymas i WEB ar viskas paejo	    	  		
+ */
 	    	  		response.setContentType("text/html");  // nusistatom kad siusim txt pranesima
 	    	  		response.setCharacterEncoding("UTF-8");
 	    	  		response.getWriter().write("Naujas patiekalu failas importuotas. " + formatter1.format(date));	// Atiduodam pranesima kad failas sekmingai issiustas i serveri + data ir laikas
 	    	  		    	  	
 	    	  	} else {
 	    	  		
-	    	  		response.getWriter().write("Neteisingas failas, failas nesuimportuotas!"); // ne csv failo neimam.
+	    	  		response.getWriter().write("Neteisingas failas, failas nesuimportuotas!"); // ne csv failo, neimam.
 	    	  	}
 	}	
 } 

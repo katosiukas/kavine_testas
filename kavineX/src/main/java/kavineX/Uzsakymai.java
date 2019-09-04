@@ -1,17 +1,9 @@
 package kavineX;
 
-//import java.util.Set;
-
-//import javax.persistence.*;
-//import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-// import duomenys.web.kavine.*;
-//import javax.persistence.JoinColumn;
-//import javax.persistence.JoinTable;
-//import javax.persistence.ManyToMany;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class Uzsakymai {
