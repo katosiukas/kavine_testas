@@ -1,11 +1,11 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
-<!--  
+  
 <beans xmlns = "http://www.springframework.org/schema/beans"
    xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation = "http://www.springframework.org/schema/beans
    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
    <bean id="uzsakymai" class="duomenys.web.kavine.UzsakymaiOrg">
-   		  property name="skait" ref="skaitymas_is_failo" / 
+   		<!--    property name="skait" ref="skaitymas_is_failo" / -->
    		<property name="skait" ref="uzsakymasJDBCTemplate" />
    </bean>
    <bean id="skaitymas_is_failo" class="duomenys.web.kavine.SkaitymasIsFailo">
@@ -32,4 +32,4 @@
    </bean>   
    
    
-</beans> -->
+</beans> 

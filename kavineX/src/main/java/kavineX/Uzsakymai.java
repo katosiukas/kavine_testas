@@ -1,9 +1,12 @@
 package kavineX;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class Uzsakymai {
@@ -14,6 +17,9 @@ public class Uzsakymai {
     private Integer trukme_ruosimo;
     private Integer trukme_kaitinimo;
     private String busena;    
+    
+ //   @ManyToOne(fetch = FetchType.LAZY)
+ //   @JoinColumn(name= "patiekalai")
     
     public Integer getId() {
 		return id;

@@ -1,71 +1,50 @@
-
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.niekam.nieko">
 <head>
+
     <title>Užsakymai</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css">
+	<link rel="stylesheet" type="text/css" href="meniu.css">
+	<link rel="icon" href="favicon.ico">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
 	
-		<style>
-					/* formos stilius */
-			label, input { display:block; }
-			input.text { margin-bottom:12px; width:95%; padding: .4em; }
-			fieldset { padding:0; border:0; margin-top:25px; }
-			h1 { font-size: 1.2em; margin: .6em 0; }
-			div#users-contain { width: 350px; margin: 20px 0; }
-			div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
-			div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
-			.ui-dialog .ui-state-error { padding: .3em; }
-			.validateTips { border: 1px solid transparent; padding: 0.3em; }
-			
-			.anuliuotas, .sanuliuotas {
-				background-color: lightblue;
-			}
-			.ivykdytas, .sivykdytas {
-				background-color: lightgreen;
-			}
-			
-			.sudetis, .ssudetis {
-				background-color: blue;
-			}
+<style>
 					
-			table, th, td {
-				border: 2px solid black;
-				
-				background-color: #f1f1c1;
-			}
+		/* formos stilius */
+					
+	label, input { display:block; }
+	input.text { margin-bottom:12px; width:95%; padding: .4em; }
+	fieldset { padding:0; border:0; margin-top:25px; }
+	h1 { font-size: 1.2em; margin: .6em 0; }
+	div#users-contain { width: 350px; margin: 20px 0; }
+	div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+	div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+	.ui-dialog .ui-state-error { padding: .3em; }
+	.validateTips { border: 1px solid transparent; padding: 0.3em; }
 			
-			.pereiti {
-				text-decoration: none;
-				background-color: white;
-				font-size: 18px;
-				border-radius: 12px;
-				color: black;
-				border: 2px solid #4CAF50;
-				box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-				padding: 4px 52px;
-			}
-			
-			.itraukti {
-				background-color: white;
-				font-size: 16px;
-				border-radius: 12px;
-				color: black;
-				border: 2px solid #4CAF50;
-				box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-				width: 250px;
-				height: 30px;
-			}
-			
-		</style>
+	.itraukti {
+	color: green;
+	left: 1050px;
+	top: 35px;
+	}
+	
+	#hm {
+	
+	position: absolute;
+	width:50%;
+	left: 1230px;
+	top: 50px;
+	
+	}
+	
+</style>
 		
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
-	
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" 
 			integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" 
 			crossorigin="anonymous">
 	</script>
-	
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 		
 		<!--script>		//kad netrugdytu gyventi
@@ -84,8 +63,11 @@
 	$(document).ready ( function() {
 			
 		var id_accessing;
+		var patiekalas = [];
+		
 				
 		pasiimtiUzsakymus();
+		
 		
 		function keistiBusena( id, busena) {
 		
@@ -104,17 +86,19 @@
 		
 		function pasiimtiUzsakymus() {
 		
+			pasiimtiPatiekalus();
+					
 			$.ajax(
 				{
 					url: "http://localhost:8080/restfull/all" 
 															
 				})
 			
-			.done(	function( data ) {
-															
-				res_str = '<table>'
-					+ '<tr><th rowspan="2">id</th><th rowspan="2">pavadinimas</th><th colspan="2">trukmė</th></tr>'
-					+ '<tr><th>ruošimo</th><th>kaitinimo</th><th>veiksmas</th></tr>';
+			.done(	function( data ) {	
+			
+				res_str = '<table align="center"><thead class="ui-widget-header">'
+					+ '<tr><th rowspan="2">ID</th><th rowspan="2">Pavadinimas</th><th colspan="2">Trukmė</th></tr>'
+					+ '<tr><th>ruošimo</th><th>kaitinimo</th><th>Bus patiektas uz</th><th>Veiksmas</th></tr>';
 						
 				for ( i = 0; i < data.length; i++) {
 						
@@ -122,26 +106,28 @@
 						+ '<td>' + data [ i ].id + '</td>' 
 						+ '<td>' + data [ i ].pav + '</td>'
 						+ '<td>' + data [ i ].trukme_ruosimo + '</td>'
-						+ '<td>' + data [ i ].trukme_kaitinimo + '</td>';
+						+ '<td>' + data [ i ].trukme_kaitinimo + '</td>'
+						+ '<td>' + patiekalas [ i ] + '</td>';
 								
 					if ( data [ i ].busena == 'uzsakytas' ) {	
 							
 						res_str +=
-							'<td><input type="button" class="anuliuotas" value="anuliuotas"></td>'
-							+ '<td><input type="button" class="ivykdytas" value="įvykdytas"></td>'
+							'<td><input type="button" class="anuliuotas ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="anuliuotas"></td>'
+							+ '<td><input type="button" class="ivykdytas ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="įvykdytas"></td>'
 					}
 					
 					if (data [i].busena == 'anuliuotas') {
-						res_str += '<td><input type="button" class="uzsakytas" value="užsakyti"></td>'
+						res_str += '<td><input type="button" class="uzsakytas ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="užsakyti"></td>'
 					}
 					
 					if (data [i].busena == 'ivykdytas') {
-						res_str += '<td><input type="button" class="uzsakytas" value="užsakyti"></td>'
+						res_str += '<td><input type="button" class="uzsakytas ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="užsakyti"></td>'
 					}
 						res_str += '</tr>';
 				}
 						
 				res_str += '</table>'
+				
 					$( '#uzsakymai' ).html ( res_str );
 						
 					$( '.anuliuotas' ).on ( 'click', function() {
@@ -220,6 +206,25 @@
 				});
 			});
 								
+		}
+		
+		function pasiimtiPatiekalus() {
+		
+		$.ajax(
+				{
+					url: "http://localhost:8080/restfull/isnesioti" 
+															
+				})
+			
+			.done(	function( data ) {	
+			
+				for ( i = 0; i < data.length; i++) {
+						
+				patiekalas[i]=data[i].patiekimo_laikas;
+				
+				}
+						
+			});
 		}
 		
 		$( '#naujas_uzsakymas' ).click( function() {
@@ -389,16 +394,28 @@
 	$( function() {
     $( document ).tooltip();
 	});
-	
-	
+		
 </script>
 
 </head>
 
 <body>
 
-	<a href="http://localhost:8080/produktai" class="pereiti">Produktų puslapis</a></br>
-	<p><label for="itraukti"></label><input class="itraukti" type="button" value="Įtraukti naują" id="itraukti" title="Įtraukti naują patiekalą į užsakymus."></p>
+	<nav class="menu">
+		<input type="checkbox" href="#" class="expandmenu" name="expandmenu" id="expandmenu" />
+		<label class="expandmenu-button" for="expandmenu">
+			<span class="lines first-line"></span>
+			<span class="lines sec-line"></span>
+			<span class="lines third-line"></span>
+			<span class="label fourth-line">Meniu</span>
+		</label>
+		<a href="http://localhost:8080/uzsakymai" class="menu-item col1"> <i class="fas fa-cart-arrow-down"></i> </a>
+ 		<a href="http://localhost:8080/patiekalai" class="menu-item col2"> <i class="fas fa-utensils"></i> </a>
+		<a href="http://localhost:8080/produktai" class="menu-item col3"> <i class="fas fa-carrot"></i> </a>
+		<a href="http://localhost:8080/apie" class="menu-item col4"> <i class="fas fa-info"></i> </a>
+	</nav>
+	
+	<p><label for="itraukti"></label><input class="itraukti ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button" value="Įtraukti naują" id="itraukti" title="Įtraukti naują patiekalą į užsakymus."></p>
 	
 	<div id="dialog-form" title="Įtraukti patiekalą:">
 	<p class="validateTips">Visi laukai privalomi!</p>
@@ -422,9 +439,9 @@
 		<p><div id="ingredientas" ></div></p>
 	</div>
 	
-	<form>
-		<input type="file" id="fileSelect" accept=".csv"/>
-		<button id="somebutton" type="button">Siūsti</button>
+	<form id="hm">
+		<input class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="file" id="fileSelect" accept=".csv"/>
+		<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="somebutton" type="button">Siūsti</button>
 	</form>
 		
 	<div id="message"></div>

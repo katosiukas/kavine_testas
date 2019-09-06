@@ -33,12 +33,14 @@
 			
 			.done(	function( data ) {
 															
-				res_str = '<table class="t">'
+				res_str = '<table class="t" align="center"><thead class="ui-widget-header">'			//cia uzlipdem jqui tema
 					+ '<tr><th rowspan="2">ID</th><th rowspan="2">Pavadinimas</th><th colspan="2">TRUKMĖ</th></tr>'
-					+ '<tr><th>ruošimo</th><th>kaitinimo</th><th>Kaina</th></tr>';
+					+ '<tr><th>ruošimo</th><th>kaitinimo</th><th>Kaina</th></tr>';	
 						
 				for ( i = 0; i < data.length; i++) {
-						
+					
+					
+					
 					res_str += '<tr class="s' + data [ i ].busena  + '" data-id="' + data [ i ].id  +'" >'
 						+ '<td>' + data [ i ].id + '</td>' 
 						+ '<td>' + data [ i ].pav + '</td>'
@@ -47,8 +49,8 @@
 						+ '<td>' + data [ i ].kaina + '</td>';
 								
 					res_str +=
-						'<td><input type="button" class="istrinti" value="Ištrinti"></td>'
-						+ '<td><input type="button" class="sudetis" value="Sudėtis"></td>'
+						'<td><input type="button" value="Ištrinti" class="istrinti ui-button ui-widget ui-state-default ui-corner-all"></td>'
+						+ '<td><input type="button" class="sudetis ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="Sudėtis"></td>'
 									
 					res_str += '</tr>';
 											
@@ -57,7 +59,7 @@
 				res_str += '</table>'
 				
 					$( '#uzsakymai' ).html ( res_str );
-						
+														
 					$( '.istrinti' ).on ( 'click', function() {
 						
 						$( this ).each ( function() {

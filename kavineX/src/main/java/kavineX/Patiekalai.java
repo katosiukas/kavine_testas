@@ -14,7 +14,10 @@ public class Patiekalai {
  private Double kaina;
  
  @OneToMany(mappedBy = "patiekalai",cascade = CascadeType.ALL)
- private List<Patiekalu_produktai> patiekalu_produktai;    
+ private List<Patiekalu_produktai> patiekalu_produktai;  
+ 
+// @OneToMany(mappedBy = "id",cascade = CascadeType.ALL)
+// private List<Uzsakymai> uzsakymai; 
 
 	public Integer getId() {
 		return id;
@@ -55,6 +58,15 @@ public class Patiekalai {
 	public void setKaina(Double kaina) {
 		this.kaina = kaina;
 	}
+	
+/*	public List<Uzsakymai> getUzsakymai() {
+		
+		return uzsakymai;
+	}
+	public void setUzsakymai (List<Uzsakymai> uzsakymai) {
+		
+		this.uzsakymai = uzsakymai;
+	} */
 	
 	public List<Patiekalu_produktai> getPatiekalu_produktai() {
 		

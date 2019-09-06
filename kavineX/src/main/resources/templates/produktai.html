@@ -1,67 +1,41 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.niekam.nieko">
 <head>
+
     <title>Produktai</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css">
-		<style>
+	<link rel="stylesheet" type="text/css" href="meniu.css">
+	<link rel="icon" href="favicon.ico">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+	
+<style>
 			
-			label, input { display:block; }
-			input.text { margin-bottom:12px; width:95%; padding: .4em; }
-			fieldset { padding:0; border:0; margin-top:25px; }
-			h1 { font-size: 1.2em; margin: .6em 0; }
-			div#users-contain { width: 350px; margin: 20px 0; }
-			div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
-			div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
-			.ui-dialog .ui-state-error { padding: .3em; }
-			.validateTips { border: 1px solid transparent; padding: 0.3em; }
-			
-			.anuliuotas, .sanuliuotas {
-				background-color: #ff3333;
-			}
-			.redaguotas, .sredaguotas {
-				background-color: #6666ff;
-			}
-				
-			table, th, td {
-			border: 2px solid black;
-			   background-color: #f1f1c1;
-			}
-			
-			html, body {
-				height: 100%;
-			}
-			
-			.pereiti {
-				text-decoration: none;
-				background-color: white;
-				font-size: 18px;
-				border-radius: 12px;
-				color: black;
-				border: 2px solid #4CAF50;
-				box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-				padding: 4px 52px;
-			}
-			
-			.itraukti {
-				background-color: white;
-				font-size: 16px;
-				border-radius: 12px;
-				color: black;
-				border: 2px solid #4CAF50;
-				box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-				width: 250px;
-				height: 30px;
-			}
-		</style>
+	label, input { display:block; }
+	input.text { margin-bottom:12px; width:95%; padding: .4em; }
+	fieldset { padding:0; border:0; margin-top:25px; }
+	h1 { font-size: 1.2em; margin: .6em 0; }
+	div#users-contain { width: 350px; margin: 20px 0; }
+	div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+	div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+	.ui-dialog .ui-state-error { padding: .3em; }
+	.validateTips { border: 1px solid transparent; padding: 0.3em; }
+	
+	.itraukti {
+	color: green;
+	left: 1100px;
+	top: 40px;
+	}
+	
+</style>
 	    
-		<script src="https://code.jquery.com/jquery-3.4.1.min.js"
-		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-		crossorigin="anonymous">
-	    </script>
-	    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+	integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+	crossorigin="anonymous">
+</script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 		
-	<script>
+<script>
 		
 		$(document).ready ( function() {
 		
@@ -96,7 +70,7 @@
 			
 						
 															
-						res_str = '<table>'
+						res_str = '<table align="center"><thead class="ui-widget-header">'
 								+ '<tr><th>id</th><th>Pavadinimas</th><th>Mato vienetai</th><th>Mato kiekybė</th><th>Kaina</th><th>Kiekis sandėlyje</th></tr>';
 						
 						for ( i = 0; i < data.length; i++) {
@@ -115,13 +89,13 @@
 							
 								res_str +=
 								
-									'<td><input type="button" class="anuliuotas" value="Naikinti"></td>'
+									'<td><input type="button" class="anuliuotas ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="Naikinti"></td>'
 									
 							}	
 							
 							// jei yra likutis galima redaguoti produkta
 							if (data [i].likutis == 'yra') {
-							res_str += '<td><input type="button" class="redaguotas" value="Redaguoti"></td>'
+							res_str += '<td><input type="button" class="redaguotas ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="Redaguoti"></td>'
 							}
 														
 							res_str += '</tr>';
@@ -217,17 +191,7 @@
 			return true;
 			}
 			}
- 
-	/*		function checkRegexp( o, regexp, n ) {
-			if ( !( regexp.test( o.val() ) ) ) {
-			o.addClass( "ui-state-error" );
-			updateTips( n );
-			return false;
-			} else {
-			return true;
-			}
-			}	*/
-			
+ 			
 		function addProdukt() {
 			var valid = true;
 			allFields.removeClass( "ui-state-error" );
@@ -337,14 +301,27 @@
     $( document ).tooltip();
 	} );
 	
-	</script>
+</script>
 
 </head>
+
 <body>
 	
-	<a href="http://localhost:8080/uzsakymai" class="pereiti">Užsakymų puslapis</a></br>
+	<nav class="menu">
+		<input type="checkbox" href="#" class="expandmenu" name="expandmenu" id="expandmenu" />
+		<label class="expandmenu-button" for="expandmenu">
+			<span class="lines first-line"></span>
+			<span class="lines sec-line"></span>
+			<span class="lines third-line"></span>
+			<span class="label fourth-line">Meniu</span>
+		</label>
+		<a href="http://localhost:8080/uzsakymai" class="menu-item col1"> <i class="fas fa-cart-arrow-down"></i> </a>
+ 		<a href="http://localhost:8080/patiekalai" class="menu-item col2"> <i class="fas fa-utensils"></i> </a>
+		<a href="http://localhost:8080/produktai" class="menu-item col3"> <i class="fas fa-carrot"></i> </a>
+		<a href="http://localhost:8080/apie" class="menu-item col4"> <i class="fas fa-info"></i> </a>
+	</nav>
 	
-	<p><label for="itraukti"></label><input class="itraukti" type="button" value="Įtraukti naują" id="itraukti" title="Įtraukti naują produktą į duomenų bazę."></p>
+	<p><label for="itraukti"></label><input class="itraukti ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button" value="Įtraukti naują" id="itraukti" title="Įtraukti naują produktą į duomenų bazę."></p>
 	
 	<div id="message"></div>
 	<div id="produktai"></div>	
